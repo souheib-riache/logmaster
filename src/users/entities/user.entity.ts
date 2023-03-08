@@ -1,6 +1,7 @@
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 import { RefreshToken } from 'src/auth/entities/refresh-token.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, BaseEntity } from 'typeorm';
+import { BaseEntity } from 'src/common/base/entities';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 
 @Entity('users')

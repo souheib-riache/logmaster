@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { CreateServiceInput, UpdateServiceInput } from "./dto";
 import { Services } from "./entities";
+import { PaginatedServices } from "./types";
 
 @Injectable()
 export class ServicesService {
@@ -41,6 +42,20 @@ export class ServicesService {
         await this.servicesRepository.delete(id)
         return true
     }
+
+    async paginatedServices(limit?: number, offset?: number): Promise<PaginatedServices> {
+        const [nodes, totalCount] = await this.servicesRepository.findAndCount({
+            take: limit,
+            skip: offset,
+            order: {
+                createdAt: 'ASC'
+            }
+        })
+
+        const hasNextPage = totalCount - (offset + limit) > 0;
+        return { nodes, totalCount, hasNextPage };
+    }
+
 
 
 }

@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { CreateNewsINput, UpdateNewsInput } from "./dto";
 import { News } from "./entities";
+import { PaginatedNews } from "./types";
 
 @Injectable()
 export class NewsService {
@@ -40,6 +41,22 @@ export class NewsService {
         }
         await this.newsRepository.delete(id)
         return true
+    }
+
+    async paginatedNews(limit?: number, offset?: number): Promise<PaginatedNews> {
+        const [nodes, totalCount] = await this.newsRepository.findAndCount({
+            relations: {
+                picture: true
+            },
+            take: limit,
+            skip: offset,
+            order: {
+                createdAt: 'ASC'
+            }
+        })
+
+        const hasNextPage = totalCount - (offset + limit) > 0;
+        return { nodes, totalCount, hasNextPage };
     }
 
 

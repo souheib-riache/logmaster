@@ -1,7 +1,9 @@
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { PaginationArgs } from "src/common/pagination/types";
 import { CreateServiceInput, UpdateServiceInput } from "./dto";
 import { Services } from "./entities";
 import { ServicesService } from "./services.service";
+import { PaginatedServices } from "./types";
 
 @Resolver(() => Services)
 export class ServicesResolver {
@@ -32,6 +34,17 @@ export class ServicesResolver {
     @Query(() => Services, { name: 'serviceById' })
     async findOne(@Args('id', { type: () => Int }) id: number): Promise<Services> {
         return await this.servicesService.findOne({ id })
+    }
+
+    @Query(() => PaginatedServices, { name: 'paginatedServices' })
+    async getNews(
+        @Args({ type: () => PaginationArgs }) args: PaginationArgs
+    ): Promise<PaginatedServices> {
+        const { limit, offset } = args
+        const response = await this.servicesService.paginatedServices(
+            limit, offset);
+
+        return <PaginatedServices>response
     }
 
 
